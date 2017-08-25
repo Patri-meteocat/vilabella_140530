@@ -1,0 +1,6 @@
+name: vilabella_140530
+dependencies:
+- python=3
+- numpy
+- scipy
+- matplotlib
