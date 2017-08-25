@@ -13,7 +13,7 @@ import numpy as np
 import scipy as sp
 import numpy.ma as ma
 import re
-import cPickle as pickle
+import pickle
 
 from pylab import *
 from scipy import ndimage
@@ -56,7 +56,7 @@ def local_valid(mask, kernel=np.ones((3,3))):
     valid_tmp = ndimage.convolve(mask_tmp, kernel, mode='wrap')
     
     # Remove added values
-    valid = valid_tmp[:, : (valid_tmp.shape[1] - ncols)]
+    valid = valid_tmp[:, : int(valid_tmp.shape[1] - ncols)]
     
     return valid.astype(int)
 
@@ -110,7 +110,7 @@ def ref_val(data, mask, kernel, method='mean'):
         conv_arr = ndimage.generic_filter(data_conv, np.nanmedian, footprint=kernel, mode='wrap')
     
     # Remove added columns and divide by weight
-    conv_arr = conv_arr[:, : (conv_arr.shape[1] - ncols)]
+    conv_arr = conv_arr[:, : int(conv_arr.shape[1] - ncols)]
     ref_arr = conv_arr/Nval_arr
     
     return ref_arr
@@ -153,10 +153,10 @@ def outlier_detector_cmean(np_ma, Vny, Nprf_arr, Nmin=2):
     sin_sumL = ndimage.convolve(sin_conv, weights=kL, mode='wrap')
     
     # Remove added columns
-    cos_sumH = cos_sumH[:, : (cos_sumL.shape[1] - ncols)]
-    cos_sumL = cos_sumL[:, : (cos_sumL.shape[1] - ncols)]
-    sin_sumH = sin_sumH[:, : (sin_sumL.shape[1] - ncols)]
-    sin_sumL = sin_sumL[:, : (sin_sumL.shape[1] - ncols)]
+    cos_sumH = cos_sumH[:, : int(cos_sumL.shape[1] - ncols)]
+    cos_sumL = cos_sumL[:, : int(cos_sumL.shape[1] - ncols)]
+    sin_sumH = sin_sumH[:, : int(sin_sumL.shape[1] - ncols)]
+    sin_sumL = sin_sumL[:, : int(sin_sumL.shape[1] - ncols)]
     
     # Average angle in local neighbourhood
     cos_avgH_ma = ma.array(data=cos_sumH, mask=mask)/Nval_arr_H
@@ -261,29 +261,29 @@ def correct_dualPRF_cmean(radar, field='velocity', Nprf=3,
 ## PROCESS FILES ############################################################################################################
 #############################################################################################################################
 
-data_path = '/Users/patriciaaltube/Desktop/Vilabella/RAW/'
-out_path = '/Users/patriciaaltube/Desktop/Vilabella/results_pkl/'
+data_path = '/home/pav/repos/vilabella_140530/RAW/'
+out_path = '/home/pav/repos/vilabella_140530/results_pkl/'
 
 for f in glob.glob(data_path + '*.RAW*'):
     
-	plt.close('all')
-    	file_name = f[-23:-10]
-    	outpkl = out_path + file_name + '_corr.pkl'
+    plt.close('all')
+    file_name = f[-23:-10]
+    outpkl = out_path + file_name + '_corr.pkl'
 
-    	radar = pyart.io.read(f)
-    	f = radar.instrument_parameters['prt_ratio']['data'][0]
-    	N = int(round(1/(f-1)))
+    radar = pyart.io.read(f)
+    fac = radar.instrument_parameters['prt_ratio']['data'][0]
+    N = int(round(1/(fac-1)))
 
-    	[vcorr_ma, out_mask] = correct_dualPRF_cmean(radar, 'velocity', Nprf=N, Nmin=3)
-	
+    [vcorr_ma, out_mask] = correct_dualPRF_cmean(radar, 'velocity', Nprf=N, Nmin=3)
+    
 
-	radar.add_field_like('velocity','velocity_corr_cmean', vcorr_ma, replace_existing = True)
-	radar.fields['velocity_corr_cmean']['standard_name'] = 'Corrected Velocity'
-	radar.fields['velocity_corr_cmean']['units'] = 'm/s'
-	radar.fields['velocity_corr_cmean']['long_name'] = 'dualPRF filtered Velocity'
-    	
-	with open(outpkl, 'wb') as output:
-	        pickle.dump(radar, output, -1)
+    radar.add_field_like('velocity','velocity_corr_cmean', vcorr_ma, replace_existing = True)
+    radar.fields['velocity_corr_cmean']['standard_name'] = 'Corrected Velocity'
+    radar.fields['velocity_corr_cmean']['units'] = 'm/s'
+    radar.fields['velocity_corr_cmean']['long_name'] = 'dualPRF filtered Velocity'
+        
+    with open(outpkl, 'wb') as output:
+            pickle.dump(radar, output, -1)
 
 
 #############################################################################################################################
