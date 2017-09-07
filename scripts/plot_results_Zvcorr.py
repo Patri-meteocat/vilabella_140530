@@ -29,7 +29,11 @@ out_path = '/home/pav/repos/vilabella_140530/vcorrz_plots/'
 lims_x = [-80, 20]
 lims_y = [-80, 20]
 ring_step = 20 
- 
+
+ref_grid = radar.get_field(0, 'reflectivity')
+ref_low = np.less(ref_grid, 0)
+ref_grid = ma.masked_where(ref_low, ref_grid)
+
 # Custom colormap for velocity
 cmap = plt.get_cmap('jet',31)
 cmaplist = [cmap(i) for i in list(range(1,14))+list(range(19,31))]
