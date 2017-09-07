@@ -30,10 +30,6 @@ lims_x = [-80, 20]
 lims_y = [-80, 20]
 ring_step = 20 
 
-ref_grid = radar.get_field(0, 'reflectivity')
-ref_low = np.less(ref_grid, 0)
-ref_grid = ma.masked_where(ref_low, ref_grid)
-
 # Custom colormap for velocity
 cmap = plt.get_cmap('jet',31)
 cmaplist = [cmap(i) for i in list(range(1,14))+list(range(19,31))]
@@ -51,6 +47,11 @@ for f in glob.glob(data_path + '*.pkl'):
 
     file_name = f[-22:-9]
     Vny = radar.instrument_parameters['nyquist_velocity']['data'][0]
+    
+    #ref_grid = radar.get_field(0, 'reflectivity')
+    #ref_low = np.less(ref_grid, 0)
+    #ref_grid = ma.masked_where(ref_low, ref_grid)
+
 
     # Loop for all sweeps in radar object
     for nsw, sweep_slice in enumerate(radar.iter_slice()):
@@ -89,7 +90,7 @@ for f in glob.glob(data_path + '*.pkl'):
 
         ax1=plt.subplot(122)
         # Display corrected velocity, (vmin, vmax) are colorbar limits
-        display.plot('reflectivity', nsw, ax=ax1, vmin=-10, vmax=60., mask_outside=False, colorbar_flag=True, title_flag=False, colorbar_label='[dBZ]')
+        display.plot('reflectivity', nsw, ax=ax1, vmin=0, vmax=60., mask_outside=False, colorbar_flag=True, title_flag=False, colorbar_label='[dBZ]')
         # Display range rings
         display.plot_range_rings(list(range(max([lims_x[0], lims_y[0]]), max([lims_x[1], lims_y[1]])+ring_step, ring_step)), lw=0.5, ls=':', ax=ax1)
         # Display cross in the radar location        
