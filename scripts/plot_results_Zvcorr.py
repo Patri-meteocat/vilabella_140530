@@ -25,6 +25,11 @@ from matplotlib import gridspec
 data_path = '/home/pav/repos/vilabella_140530/results_pkl/'
 out_path = '/home/pav/repos/vilabella_140530/vcorrz_plots/'
 
+# AQUIIIII!!!! (todo en [km])
+lims_x = [-80, 20]
+lims_y = [-80, 20]
+ring_step = 20 
+ 
 # Custom colormap for velocity
 cmap = plt.get_cmap('jet',31)
 cmaplist = [cmap(i) for i in list(range(1,14))+list(range(19,31))]
@@ -51,7 +56,7 @@ for f in glob.glob(data_path + '*.pkl'):
         title = file_name + ' el=' + '%2.2f' % el + 'deg'
 
         # Out plot (png) filename
-        out_pdf = out_path + file_name + '_' + str(nsw) + '_corr.png'
+        out_pdf = out_path + 'el' + '%2.2f' % el + '_' + file_name + '_' + '_corr.png'
 
         # Start plot
         display = pyart.graph.RadarDisplay(radar)
@@ -61,15 +66,15 @@ for f in glob.glob(data_path + '*.pkl'):
         # Display corrected velocity, (vmin, vmax) are colorbar limits
         display.plot('velocity_corr_cmean', nsw, ax=ax, vmin=-Vny, vmax=Vny, mask_outside=False, cmap=cmap_vel, colorbar_flag=True, title_flag=False, colorbar_label='[m/s]')
         # Display range rings
-        display.plot_range_rings(list(range(20, 160, 20)), lw=0.5, ls=':', ax=ax)
+        display.plot_range_rings(list(range(max([lims_x[0], lims_y[0]]), max([lims_x[1], lims_y[1]])+ring_step, ring_step)), lw=0.5, ls=':', ax=ax)
         # Display cross in the radar location        
         display.plot_cross_hair(0.5, ax=ax)
         # Set plot limits
-        ax.set_xlim((-150, 150))
-        ax.set_ylim((-150, 150))
+        ax.set_xlim((lims_x[0], lims_x[1]))
+        ax.set_ylim((lims_y[0], lims_y[1]))
         # Set tick positions in axes
-        ax.set_yticks(np.arange(-120, 160, 40))
-        ax.set_xticks(np.arange(-120, 160, 40))
+        ax.set_xticks(np.arange(lims_x[0]+20, lims_x[1], 20))
+        ax.set_yticks(np.arange(lims_y[0]+20, lims_y[1], 20))
         # Set axes' title
         ax.set_xlabel('Along beam distance East-West (km)')
         ax.set_ylabel('Along beam distance North-South (km)')
@@ -82,15 +87,15 @@ for f in glob.glob(data_path + '*.pkl'):
         # Display corrected velocity, (vmin, vmax) are colorbar limits
         display.plot('reflectivity', nsw, ax=ax1, vmin=-10, vmax=60., mask_outside=False, colorbar_flag=True, title_flag=False, colorbar_label='[dBZ]')
         # Display range rings
-        display.plot_range_rings(list(range(20, 160, 20)), lw=0.5, ls=':', ax=ax1)
+        display.plot_range_rings(list(range(max([lims_x[0], lims_y[0]]), max([lims_x[1], lims_y[1]])+ring_step, ring_step)), lw=0.5, ls=':', ax=ax1)
         # Display cross in the radar location        
         display.plot_cross_hair(0.5, ax=ax1)
         # Set plot limits
-        ax1.set_xlim((-150, 150))
-        ax1.set_ylim((-150, 150))
+        ax1.set_xlim((lims_x[0], lims_x[1]))
+        ax1.set_ylim((lims_y[0], lims_y[1]))
         # Set tick positions in axes
-        ax1.set_yticks(np.arange(-120, 160, 40))
-        ax1.set_xticks(np.arange(-120, 160, 40))
+        ax1.set_yticks(np.arange(lims_x[0]+20, lims_x[1], 20))
+        ax1.set_xticks(np.arange(lims_y[0]+20, lims_y[1], 20))
         # Set axes' title
         ax1.set_xlabel('Along beam distance East-West (km)')
         ax1.set_ylabel('Along beam distance North-South (km)')
