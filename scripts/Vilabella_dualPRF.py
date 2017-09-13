@@ -262,7 +262,7 @@ def correct_dualPRF_cmean(radar, field='velocity', Nprf=3,
 #############################################################################################################################
 
 data_path = '/home/pav/repos/vilabella_140530/RAW/'
-out_path = '/home/pav/repos/vilabella_140530/results_pkl/'
+out_path = '/home/pav/repos/vilabella_140530/RESULTS_pkl/'
 
 for f in glob.glob(data_path + '*.RAW*'):
     
