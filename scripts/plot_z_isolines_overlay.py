@@ -96,8 +96,9 @@ for f in glob.glob(data_path + '*.pkl'):
 
         display.plot('velocity_corr_cmean', sweep=nsw, vmin=-v_ny, vmax=v_ny, fig=fig,
                      ax=ax, cmap=cmap_vel, colorbar_label='Velocity (m/s)')
-        # adds coutours to plot
         display.set_limits(xlim=lims_x, ylim=lims_y)
+
+        # adds coutours to plot
         contours = ax.contour(x, y, data, levels, linewidths=1.5, colors='k',
                               linestyles='solid', antialiased=True)
         # adds contour labels (fmt= '%r' displays 10.0 vs 10.0000)
@@ -108,8 +109,10 @@ for f in glob.glob(data_path + '*.pkl'):
         display.plot_range_rings(list(range(max([lims_x[0], lims_y[0]]), 
                                             max([lims_x[1], lims_y[1]]) + ring_step, ring_step)), 
                                  lw=0.5, ls=':', ax=ax)
+
         # Display cross in the radar location        
         display.plot_cross_hair(0.5, ax=ax)
+
         # Set plot limits
         ax.set_xlim((lims_x[0], lims_x[1]))
         ax.set_ylim((lims_y[0], lims_y[1]))
